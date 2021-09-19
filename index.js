@@ -5,17 +5,6 @@ const config = require("./cnfg/mongo.json");
 const usersModel = require("./src/connect");
 const utils = require("./src/utils");
 
-const express = require('express');
-const app = express();
-const path = require('path');
-
-
-app.use(express.static(__dirname + '/'));
-app.get('*', (req, res) =>{
-    res.sendFile(path.resolve(__dirname, './src/index.html'));
-});
-app.listen(process.env.PORT || 8080);
-
 const vk = new VK({ token: config.tokenVk });
 
 vk.updates.on("message_new", updates.middleware);
