@@ -5,7 +5,9 @@
   "main": "index.js",
   "dependencies": {
     "@vk-io/hear": "^1.1.0",
+    "express": "^4.17.1",
     "mongoose": "^6.0.6",
+    "path": "^0.12.7",
     "vk-io": "^4.4.0"
   },
   "devDependencies": {},

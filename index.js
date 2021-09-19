@@ -4,8 +4,17 @@ const updates = require("./src/updates");
 const config = require("./cnfg/mongo.json");
 const usersModel = require("./src/connect");
 const utils = require("./src/utils");
-const { db } = require("./src/connect");
-const { resolveObjectURL } = require("buffer");
+
+var express = require('express');
+var app = express();
+var path = require('path');
+
+
+app.use(express.static(__dirname + '/'));
+app.get('*', (req, res) =>{
+    res.sendFile(path.resolve(__dirname, './src/index.html'));
+});
+app.listen(process.env.PORT || 8080);
 
 const vk = new VK({ token: config.tokenVk });
 
