@@ -5,16 +5,6 @@ const config = require("./cnfg/mongo.json");
 const usersModel = require("./src/connect");
 const utils = require("./src/utils");
 
-var express = require("express");
-var app = express();
-var path = require("path");
-
-app.use(express.static(__dirname + "/"));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "./src/index.html"));
-});
-app.listen(process.env.PORT || 8080);
-
 const vk = new VK({ token: config.tokenVk });
 
 vk.updates.on("message_new", updates.middleware);
@@ -30,19 +20,21 @@ vk.updates.on("message_new", async (context, next) => {
       id: context.senderId,
       name: request.first_name,
       balance: 100,
-      experience: 0,
+      experience: 1,
       admin: 0,
       work: 0,
       airline: 0,
       nameAirline: "false",
       balanceAirline: 0,
-      energy: 0,
+      energy: 10,
     });
 
     regisration.save(function (err) {
       if (err) return console.log(err);
 
-      context.send(`Регистрация прошла успешно!`);
+      context.send(`🥰 ${request.first_name} вы зарегистрировались! 
+
+ℹ Отправьте "помощь", чтобы получить список команд.`);
     });
   }
 
@@ -58,30 +50,32 @@ updates.hear(/^(?:казино)\s?(.*)?$/i, async (context) => {
   const emotionPositive = utils.pick(["😇", "🙂", `🥰`, `😇`, `😉`]);
   const emotionNegative = utils.pick(["😕", "🤕", `😫`, `😰`, `😔`]);
 
-  if (!Number(context.$match[1])) return context.send(`${row.name}, использование: Казино [сумма]`);
+  if (!Number(context.$match[1]))
+    return context.send(`${row.name}, использование: Казино [сумма]`);
 
   context.$match[1] = Math.floor(Number(context.$match[1]));
   row.balance = Math.floor(Number(row.balance));
 
   if (context.$match[1] <= 0) return;
 
-  if (context.$match[1] > row.balance) return context.send(`Недостаточно средств ${emotionNegative}`);
+  if (context.$match[1] > row.balance)
+    return context.send(`Недостаточно средств ${emotionNegative}`);
 
-    const multiply = utils.pick([false, true, null]);
+  const multiply = utils.pick([false, true, null]);
 
-    if (multiply === true) {
-      row.balance += context.$match[1];
-      row.save();
+  if (multiply === true) {
+    row.balance += context.$match[1];
+    row.save();
 
-      return context.send(
-        `Вы выиграли ${utils.sp(
-          Math.floor(context.$match[1])
-        )}$ ${emotionPositive}
+    return context.send(
+      `Вы выиграли ${utils.sp(
+        Math.floor(context.$match[1])
+      )}$ ${emotionPositive}
 💰 Баланс: ${utils.sp(row.balance)}$`
-      );
-    }
+    );
+  }
 
-    if(multiply == false) {
+  if (multiply == false) {
     row.balance -= context.$match[1];
     row.save();
 
@@ -89,7 +83,7 @@ updates.hear(/^(?:казино)\s?(.*)?$/i, async (context) => {
       `Вы проиграли ${utils.sp(context.$match[1])}$ ${emotionNegative}
 💰 Баланс: ${utils.sp(row.balance)}$`
     );
-    }
+  }
 
   if (multiply === null) {
     return context.send(`Ваши деньги остаются при вас ${emotionPositive}
@@ -125,16 +119,15 @@ updates.hear(/^(?:взять)(.*)(?:валюты)$/i, async (context) => {
   if (!Number(context.$match[1])) return;
   if (Number(context.$match[1]) < 1) return;
 
-  if (row.balance > 10000000000) return context.send(`Лимит вашего баланса превышен!`);
+  if (row.balance > 10000000000)
+    return context.send(`Лимит вашего баланса превышен!`);
 
-    row.balance += context.$match[1];
-    row.save();
+  row.balance += context.$match[1];
+  row.save();
 
-    return context.send(
-      `Вы выдали себе ${utils.sp(
-        Number(context.$match[1])
-      )}$ игровой валюты. 💵`
-    );
+  return context.send(
+    `Вы выдали себе ${utils.sp(Number(context.$match[1]))}$ игровой валюты. 💵`
+  );
 });
 
 updates.hear(/^(?:взять)(.*)(?:опыта)$/i, async (context) => {
@@ -147,14 +140,15 @@ updates.hear(/^(?:взять)(.*)(?:опыта)$/i, async (context) => {
   if (!Number(context.$match[1])) return;
   if (Number(context.$match[1]) < 1) return;
 
-  if (row.experience > 10000000000) return context.send(`Лимит вашего опыта превышен!`);
+  if (row.experience > 10000000000)
+    return context.send(`Лимит вашего опыта превышен!`);
 
-    row.experience += context.$match[1];
-    row.save();
+  row.experience += context.$match[1];
+  row.save();
 
-    return context.send(
-      `Вы выдали себе ${utils.sp(Number(context.$match[1]))} ед. опыта. 💵`
-    );
+  return context.send(
+    `Вы выдали себе ${utils.sp(Number(context.$match[1]))} ед. опыта. 💵`
+  );
 });
 
 updates.hear(/^(?:взять)(.*)(?:энергии)$/i, async (context) => {
@@ -167,14 +161,15 @@ updates.hear(/^(?:взять)(.*)(?:энергии)$/i, async (context) => {
   if (!Number(context.$match[1])) return;
   if (Number(context.$match[1]) < 1) return;
 
-  if (row.energy > 10000000000) return context.send(`Лимит вашей энергии превышен!`);
+  if (row.energy > 10000000000)
+    return context.send(`Лимит вашей энергии превышен!`);
 
-    row.energy += context.$match[1];
-    row.save();
+  row.energy += context.$match[1];
+  row.save();
 
-    return context.send(
-      `Вы выдали себе ${utils.sp(Number(context.$match[1]))} ед. энергии. 💵`
-    );
+  return context.send(
+    `Вы выдали себе ${utils.sp(Number(context.$match[1]))} ед. энергии. 💵`
+  );
 });
 
 updates.hear(/^(?:баланс)$/i, async (context) => {
@@ -219,12 +214,17 @@ updates.hear(/^(?:трейд вверх)\s?(.*)?$/i, async (context) => {
 
   context.$match[1] = Number(context.$match[1]);
 
-  if (!Number(context.$match[1])) return context.send(`${row.name}, использование > Трейд вверх [сумма] 📈`);
+  if (!Number(context.$match[1]))
+    return context.send(`${row.name}, использование > Трейд вверх [сумма] 📈`);
 
   context.$match[1] = Number(context.$match[1]);
 
-  if (row.balance < context.$match[1]) return context.send(`${row.name}, недостаточно денег 😣`);
-  if (context.$match[1] < 50) return context.send(`${row.name}, сумма трейда должна быть не менее 50$ 😣`);
+  if (row.balance < context.$match[1])
+    return context.send(`${row.name}, недостаточно денег 😣`);
+  if (context.$match[1] < 50)
+    return context.send(
+      `${row.name}, сумма трейда должна быть не менее 50$ 😣`
+    );
 
   let kyrc = utils.random(1, 1000);
   let win = utils.random(1, 2);
@@ -254,12 +254,17 @@ updates.hear(/^(?:трейд вниз)\s?(.*)?$/i, async (context) => {
 
   context.$match[1] = Number(context.$match[1]);
 
-  if (!Number(context.$match[1])) return context.send(`${row.name}, использование > Трейд вниз [сумма] 📈`);
+  if (!Number(context.$match[1]))
+    return context.send(`${row.name}, использование > Трейд вниз [сумма] 📈`);
 
   res = Number(context.$match[1]);
 
-  if (row.balance < res) return context.send(`${row.name}, недостаточно денег 😣`);
-  if (res < 50) return context.send(`${row.name}, сумма трейда должна быть не менее 50$ 😣`);
+  if (row.balance < res)
+    return context.send(`${row.name}, недостаточно денег 😣`);
+  if (res < 50)
+    return context.send(
+      `${row.name}, сумма трейда должна быть не менее 50$ 😣`
+    );
 
   let kyrc = utils.random(1, 1000);
   let win = utils.random(1, 2);
@@ -287,40 +292,53 @@ updates.hear(/^(?:работать)$/i, async (context) => {
   const row = await usersModel.findOne({ id: context.senderId });
 
   if (!row.work) return context.send(`${list.works1}`);
-  if (!row.energy) return context.send(`🥴 ${row.name}, нет энергии!\n\nℹ Энергия восстанавливается каждые 5 мин.`);
+  if (!row.energy)
+    return context.send(
+      `🥴 ${row.name}, нет энергии!\n\nℹ Энергия восстанавливается каждые 5 мин.`
+    );
   if (!row.work) return context.send(`${list.works1}`);
 
   row.balance += list.works[row.work - 1].profit;
   row.energy -= 1;
   row.save();
-  if (row.energy > 1) return context.send( `${row.name}, смена окончена!
+  if (row.energy > 1)
+    return context.send(`${row.name}, смена окончена!
 
 💸 Зарплата > ${utils.sp(list.works[row.work - 1].profit)}$
 🏋 Энергии > ${row.energy} ед.`);
 
-  return context.send( `${row.name}, смена окончена! 
+  return context.send(`${row.name}, смена окончена! 
 
 💸 Зарплата > ${utils.sp(list.works[row.work - 1].profit)}$
-🏋 Энергии закончилась!`
-    );
+🏋 Энергии закончилась!`);
 });
 
 updates.hear(/^(?:работа)\s?(.*)?$/i, async (context) => {
   const row = await usersModel.findOne({ id: context.senderId });
 
   if (!context.$match[1]) return context.send(`${list.works1}`);
-  if (!row.experience) {row.experience = 1; row.save();}
 
   context.$match[1] = Number(context.$match[1]);
 
   if (context.$match[1] > 9) return context.send(`${list.works1}`);
   if (context.$match[1] < 1) return context.send(`${list.works1}`);
   if (!Number(context.$match[1])) return context.send(`${list.works1}`);
-  if (row.experience < list.works[context.$match[1] - 1].experience) return context.send(`${row.name}, для трудоустройства на работу "${list.works[context.$match[1] - 1].name}" нужно ${list.works[context.$match[1] - 1].experience} ед.опыта. У вас › ${row.experience} ед опыта.`);
+  if (row.experience < list.works[context.$match[1] - 1].experience)
+    return context.send(
+      `${row.name}, для трудоустройства на работу "${
+        list.works[context.$match[1] - 1].name
+      }" нужно ${
+        list.works[context.$match[1] - 1].experience
+      } ед.опыта. У вас › ${row.experience} ед опыта.`
+    );
 
-      row.work = context.$match[1];
-      row.save();
-      return context.send(`Вы устроились на работу "${list.works[context.$match[1] - 1].name}".\n\n Начать смену > работать`);
+  row.work = context.$match[1];
+  row.save();
+  return context.send(
+    `Вы устроились на работу "${
+      list.works[context.$match[1] - 1].name
+    }".\n\n Начать смену > работать`
+  );
 });
 
 updates.hear(/^(?:Авиакомпания|ак)$/i, async (context) => {
@@ -329,12 +347,20 @@ updates.hear(/^(?:Авиакомпания|ак)$/i, async (context) => {
   text.lvl = ``;
   text.money = ``;
 
-  if (list.airline[row.airline]) text.lvl += `ℹ Доступно улучшение за ${utils.sp(list.airline[row.airline].cost)}$, чтобы улучшить авиакомпанию отправьте > улучшить ак`;
-  if (row.balanceAirline) text.money += `🤑 Доступно ${utils.sp(row.balanceAirline)}$, чтобы обналичить отправьте > обналичить ак`;
-  if (!row.airline) context.send(`✈️ ${row.name}, у вас нет авиакомпаний!\n\nℹ Для создания используйте: авиакомпания [название]`);
+  if (list.airline[row.airline])
+    text.lvl += `ℹ Доступно улучшение за ${utils.sp(
+      list.airline[row.airline].cost
+    )}$, чтобы улучшить авиакомпанию отправьте > улучшить ак`;
+  if (row.balanceAirline)
+    text.money += `🤑 Доступно ${utils.sp(
+      row.balanceAirline
+    )}$, чтобы обналичить отправьте > обналичить ак`;
+  if (!row.airline)
+    context.send(
+      `✈️ ${row.name}, у вас нет авиакомпаний!\n\nℹ Для создания используйте: авиакомпания [название]`
+    );
 
-
-    return context.send(`✈️ ${row.name}, информация о авиакомпаний!
+  return context.send(`✈️ ${row.name}, информация о авиакомпаний!
 ✉️ Наименование > ${row.nameAirline}
 💸 Прибыль > ${utils.sp(list.airline[row.airline - 1].profit)}$/В час
 💰 Счёт > ${utils.sp(row.balanceAirline)}$
@@ -345,38 +371,50 @@ updates.hear(/^(?:Авиакомпания|ак)\s?(.*)?$/i, async (context) => 
   const row = await usersModel.findOne({ id: context.senderId });
   const name = context.$match[1];
 
-  if (!name) return context.send(`✈️ ${row.name}, введите название!\n\nℹ Использование: авиакомпания [название]`);
-  if (row.balance < 50000000) return context.send(`${row.name}, недостаточно денег 😣`);
-  if (row.experience < 30) return context.send(`✈️ Для создания авиакомпаний нужно 30 ед.опыта.`);
+  if (!name)
+    return context.send(
+      `✈️ ${row.name}, введите название!\n\nℹ Использование: авиакомпания [название]`
+    );
+  if (row.balance < 50000000)
+    return context.send(`${row.name}, недостаточно денег 😣`);
+  if (row.experience < 30)
+    return context.send(`✈️ Для создания авиакомпаний нужно 30 ед.опыта.`);
 
   row.balance -= 50000000;
   row.airline = 1;
   row.nameAirline = name;
   row.save();
 
-  return context.send(`✈️ Вы создали авиакомпанию.\n\nℹ Просмотреть информацию > авиакомпнаия.`);
+  return context.send(
+    `✈️ Вы создали авиакомпанию.\n\nℹ Просмотреть информацию > авиакомпнаия.`
+  );
 });
 
 updates.hear(/^(?:улучшить ак)$/i, async (context) => {
   const row = await usersModel.findOne({ id: context.senderId });
 
   if (!row.airline) return context.send(list.works1);
-  if (!list.airline[row.airline]) return context.send(`${row.name}, ак максимально улучшена ☺️`);
-  if (row.balance < list.airline[row.airline].cost) return context.send(`${row.name}, недостаточно денег 😣`);
+  if (!list.airline[row.airline])
+    return context.send(`${row.name}, ак максимально улучшена ☺️`);
+  if (row.balance < list.airline[row.airline].cost)
+    return context.send(`${row.name}, недостаточно денег 😣`);
 
   const m = list.airline[row.airline].cost;
 
-    row.balance -= m;
-    row.airline += 1;
-    row.save();
-    return context.send(`${row.name}, вы улучшили авиокампанию за ${utils.sp(m)} 👍`);
+  row.balance -= m;
+  row.airline += 1;
+  row.save();
+  return context.send(
+    `${row.name}, вы улучшили авиокампанию за ${utils.sp(m)} 👍`
+  );
 });
 
 updates.hear(/^(?:обналичить ак)$/i, async (context) => {
   const row = await usersModel.findOne({ id: context.senderId });
 
   if (!row.airline) return context.send(list.works1);
-  if (!row.balanceAirline) return context.send(`${row.name}, на счёте нет денег 😪`);
+  if (!row.balanceAirline)
+    return context.send(`${row.name}, на счёте нет денег 😪`);
 
   const m = row.balanceAirline;
   row.balanceAirline = 0;
@@ -424,5 +462,31 @@ list.works = [
   if (err) return console.log(err);
   // сохранили!
 });*/
+
+setInterval(async () => {
+  const row = await usersModel.find({});
+
+  for (var i = 0; i < row.length; i++) {
+    if (row[i].airline) {
+      const rowOne = await usersModel.findOne({ id: row[i].id });
+
+      rowOne.balanceAirline += list.airline[rowOne.airline - 1].cost;
+      rowOne.save();
+    }
+  }
+}, 3600000);
+
+setInterval(async () => {
+  const row = await usersModel.find({});
+
+  for (var i = 0; i < row.length; i++) {
+    if (row[i].energy < 10) {
+      const rowOne = await usersModel.findOne({ id: row[i].id });
+
+      rowOne.energy += 1;
+      rowOne.save();
+    }
+  }
+}, 300000);
 
 return vk.updates.start();
