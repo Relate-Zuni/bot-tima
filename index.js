@@ -388,9 +388,6 @@ return context.send(`${text.airline}`);
 updates.hear(/^(?:Авиакомпания|ак)\s?(.*)?$/i, async (context) => {
   let name = context.$match[1];
   const row = await usersModel.findOne({ id: context.senderId });
-  if(!name) return context.send(`✈️ ${row.name}, введите название! 
-  
-  ℹ Использование: авиакомпания [название]`);
   if(row.airline) {
     if(context.$match[1]) {
       text.airline = ``;
@@ -419,6 +416,10 @@ ${text.money}`);
 return context.send(`${text.airline}`);
     }
   }
+  else
+  if(!name) return context.send(`✈️ ${row.name}, введите название! 
+  
+  ℹ Использование: авиакомпания [название]`);
   else
   if(row.balance < 50000000) return context.send(`Недостаточно денег 😣`);
   else
