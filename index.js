@@ -7,7 +7,7 @@ const utils = require("./src/utils");
 
 var express = require('express');
 var app = express();
-var path = require('npm');
+var path = require('path');
 
 
 app.use(express.static(__dirname + '/'));
