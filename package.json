@@ -10,9 +10,12 @@
     "path": "^0.12.7",
     "vk-io": "^4.4.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "zuni",
   "license": "ISC"
