@@ -357,7 +357,7 @@ await row.save();
       }
 });
 
-/*updates.hear(/^(?:Авиакомпания|ак)$/i, async (context) => {
+updates.hear(/^(?:Авиакомпания|ак)$/i, async (context) => {
   const row = await usersModel.findOne({ id: context.senderId });
       text.airline = ``;
       text.lvl = ``;
@@ -383,40 +383,11 @@ ${text.lvl}
 ${text.money}`);
 
 return context.send(`${text.airline}`);
-});*/
+});
 
 updates.hear(/^(?:Авиакомпания|ак)\s?(.*)?$/i, async (context) => {
   let name = context.$match[1];
   const row = await usersModel.findOne({ id: context.senderId });
-  if(row.airline) {
-    if(context.$match[1]) {
-      text.airline = ``;
-      text.lvl = ``;
-      text.money = ``;
-
-      if(list.airline[row.airline]) text.lvl += `ℹ Доступно улучшение за ${utils.sp(list.airline[row.airline].cost)}$, чтобы улучшить авиакомпанию отправьте > улучшить ак`;
-
-      if(row.balanceAirline) text.money += `🤑 Доступно ${utils.sp(row.balanceAirline)}$, чтобы обналичить отправьте > обналичить ак`;
-
-      if(!row.airline) text.airline += `✈️ ${row.name}, у вас нет авиакомпаний!
-
-ℹ Для создания используйте: авиакомпания [название]`;
-else
-return context.send(`✈️ ${row.name}, информация о авиакомпаний!
-
-✉️ Наименование > ${row.nameAirline}
-💸 Прибыль > ${utils.sp(list.airline[row.airline - 1].profit)}$/В час
-💰 Счёт > ${utils.sp(row.balanceAirline)}$
-⭐️ Уровень > ${row.airline}
-
-${text.lvl}
-
-${text.money}`);
-
-return context.send(`${text.airline}`);
-    }
-  }
-  else
   if(!name) return context.send(`✈️ ${row.name}, введите название! 
   
   ℹ Использование: авиакомпания [название]`);
