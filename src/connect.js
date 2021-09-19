@@ -25,11 +25,6 @@ app.use(todoRoutes)
 
 async function start() {
   try {
-mongoose
-  .connect(mongo.tokenMongo, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   app.listen(PORT, () => {
     console.log("Server started...");
   })
@@ -39,6 +34,12 @@ console.log(e);
 }
 
 start();
+
+mongoose
+  .connect(mongo.tokenMongo, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
 mongoose.Promise = global.Promise;
 

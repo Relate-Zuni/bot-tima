@@ -5,6 +5,8 @@ const SECRET_KEY = "b296c0fd3b3c9bec23913a4723ff65a5";
 const QiwiBillPaymentsAPI = require("@qiwi/bill-payments-node-js-sdk");
 const qiwiApi = new QiwiBillPaymentsAPI(SECRET_KEY);
 
+let errorSend = '';
+
 function random(x, y) {
   return y
     ? Math.round(Math.random() * (y - x)) + x
@@ -29,13 +31,27 @@ return qiwiApi.createPaymentForm(params);
 
 router.get('/', (req, res) => {
     res.render('index', {
-      name: 'Bot-tima launched...'
+      error: errorSend
     })
   })
 
   router.post('/donate', async (req, res) => {
-    if(!req.body.id) return;
-    if(!req.body.amount) return;
+    let usersModel = require("../src/connect");
+    if(!req.body.id) {
+      res.redirect('/')
+       return errorSend = 'Введите ID!'
+    }
+    if(!req.body.amount) {
+      res.redirect('/')
+      return errorSend = 'Введите количество донатной валюты!'
+   }
+
+    let user = await usersModel.find({ id: req.body.id});
+
+    if(!user.length) { 
+      res.redirect('/')
+      return errorSend = 'Такой ID нет в системе!';
+     }
 
     res.redirect(createOplata(req.body.id, req.body.amount))
   })  
