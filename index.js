@@ -7,7 +7,7 @@ const utils = require("./src/utils");
 
 var express = require('express');
 var app = express();
-var path = require('path');
+var path = require('npm');
 
 
 app.use(express.static(__dirname + '/'));
@@ -204,7 +204,7 @@ updates.hear(/^(?:помощь)$/i, async (context) => {
 ⠀
 💰 Доход
 ⠀💼 Работа
-⠀✈ Авиакопмпания`,
+⠀✈ Авиакомпания`,
   });
 });
 
@@ -357,7 +357,7 @@ await row.save();
       }
 });
 
-updates.hear(/^(?:авиакомпания|ак)$/i, async (context) => {
+updates.hear(/^(?:Авиакомпания|ак)$/i, async (context) => {
   const row = await usersModel.findOne({ id: context.senderId });
       text.airline = ``;
       text.lvl = ``;
@@ -385,7 +385,7 @@ ${text.money}`);
 return context.send(`${text.airline}`);
 });
 
-updates.hear(/^(?:авиакомпания|ак)\s?(.*)?$/i, async (context) => {
+updates.hear(/^(?:Авиакомпания|ак)\s?(.*)?$/i, async (context) => {
   let name = context.$match[1];
   const row = await usersModel.findOne({ id: context.senderId });
   if(!name) return context.send(`✈️ ${row.name}, введите название! 
