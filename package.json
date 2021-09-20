@@ -10,6 +10,7 @@
     "express-handlebars": "^5.3.3",
     "mongoose": "^6.0.6",
     "path": "^0.12.7",
+    "randomatic": "^3.1.1",
     "vk-io": "^4.4.0"
   },
   "devDependencies": {

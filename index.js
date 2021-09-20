@@ -1,21 +1,22 @@
 const VK = require("./src/vkontakte");
 
-const updates = require("./src/updates");
 const config = require("./cnfg/mongo.json");
-const usersModel = require("./src/connect");
-const utils = require("./src/utils");
+const mongo = require("./src/mongo.js");
+const utils = require("./src/utils.js");
+const updates = require("./src/updates.js");
+const express = require("./src/express.js");
 
 const vk = new VK({ token: config.tokenVk });
 
 vk.updates.on("message_new", updates.middleware);
 
 vk.updates.on("message_new", async (context, next) => {
-  let row = await usersModel.find({ id: `${context.senderId}` });
+  let row = await mongo.find({ id: `${context.senderId}` });
 
   if (!row.length) {
     const [request] = await vk.api.users.get({ user_id: context.senderId });
 
-    regisration = new usersModel({
+    regisration = new mongo({
       uid: row.length + 1,
       id: context.senderId,
       name: request.first_name,
@@ -45,7 +46,7 @@ var text = {};
 var list = {};
 
 updates.hear(/^(?:казино)\s?(.*)?$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   const emotionPositive = utils.pick(["😇", "🙂", `🥰`, `😇`, `😉`]);
   const emotionNegative = utils.pick(["😕", "🤕", `😫`, `😰`, `😔`]);
@@ -92,7 +93,7 @@ updates.hear(/^(?:казино)\s?(.*)?$/i, async (context) => {
 });
 
 updates.hear(/^(?:профиль)$/i, async (context) => {
-  let row = await usersModel.find({ id: `${context.senderId}` });
+  let row = await mongo.find({ id: `${context.senderId}` });
 
   row = row[0];
 
@@ -110,7 +111,7 @@ updates.hear(/^(?:профиль)$/i, async (context) => {
 });
 
 updates.hear(/^(?:взять)(.*)(?:валюты)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   if (!row.admin) return context.send(`${row.name}, у Вас не хватает прав.`);
 
@@ -131,7 +132,7 @@ updates.hear(/^(?:взять)(.*)(?:валюты)$/i, async (context) => {
 });
 
 updates.hear(/^(?:взять)(.*)(?:опыта)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   if (!row.admin) return context.send(`${row.name}, у Вас не хватает прав.`);
 
@@ -152,7 +153,7 @@ updates.hear(/^(?:взять)(.*)(?:опыта)$/i, async (context) => {
 });
 
 updates.hear(/^(?:взять)(.*)(?:энергии)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   if (!row.admin) return context.send(`${row.name}, у Вас не хватает прав.`);
 
@@ -173,7 +174,7 @@ updates.hear(/^(?:взять)(.*)(?:энергии)$/i, async (context) => {
 });
 
 updates.hear(/^(?:баланс)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
   text.balance = ``;
 
   if (row.balance) text.balance += `💵 На руках > ${utils.sp(row.balance)}$`;
@@ -184,7 +185,7 @@ updates.hear(/^(?:баланс)$/i, async (context) => {
 });
 
 updates.hear(/^(?:помощь)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   return context.send({
     message: `🎮 ${row.name}, помощь по играм!
@@ -204,13 +205,13 @@ updates.hear(/^(?:помощь)$/i, async (context) => {
 });
 
 updates.hear(/^(?:трейд)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   return context.send(`${row.name}, использование: Трейд [вверх/вниз] [сумма]`);
 });
 
 updates.hear(/^(?:трейд вверх)\s?(.*)?$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   context.$match[1] = Number(context.$match[1]);
 
@@ -250,7 +251,7 @@ updates.hear(/^(?:трейд вверх)\s?(.*)?$/i, async (context) => {
 });
 
 updates.hear(/^(?:трейд вниз)\s?(.*)?$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   context.$match[1] = Number(context.$match[1]);
 
@@ -289,7 +290,7 @@ updates.hear(/^(?:трейд вниз)\s?(.*)?$/i, async (context) => {
 });
 
 updates.hear(/^(?:работать)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   if (!row.work) return context.send(`${list.works1}`);
   if (!row.energy)
@@ -314,7 +315,7 @@ updates.hear(/^(?:работать)$/i, async (context) => {
 });
 
 updates.hear(/^(?:работа)\s?(.*)?$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   if (!context.$match[1]) return context.send(`${list.works1}`);
 
@@ -342,7 +343,7 @@ updates.hear(/^(?:работа)\s?(.*)?$/i, async (context) => {
 });
 
 updates.hear(/^(?:Авиакомпания|ак)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   text.lvl = ``;
   text.money = ``;
@@ -368,7 +369,7 @@ updates.hear(/^(?:Авиакомпания|ак)$/i, async (context) => {
 });
 
 updates.hear(/^(?:Авиакомпания|ак)\s?(.*)?$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
   const name = context.$match[1];
 
   if (!name)
@@ -391,7 +392,7 @@ updates.hear(/^(?:Авиакомпания|ак)\s?(.*)?$/i, async (context) => 
 });
 
 updates.hear(/^(?:улучшить ак)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   if (!row.airline) return context.send(list.works1);
   if (!list.airline[row.airline])
@@ -410,7 +411,7 @@ updates.hear(/^(?:улучшить ак)$/i, async (context) => {
 });
 
 updates.hear(/^(?:обналичить ак)$/i, async (context) => {
-  const row = await usersModel.findOne({ id: context.senderId });
+  const row = await mongo.findOne({ id: context.senderId });
 
   if (!row.airline) return context.send(list.works1);
   if (!row.balanceAirline)
@@ -456,19 +457,28 @@ list.works = [
   { id: 9, icon: "👨🏻‍💻", name: "IT-Специалист", profit: 30000, experience: 70 },
 ];
 
-//var awesome_instance = new usersModel({ id: 1, name: "awesome", balance: 30 });
+//var awesome_instance = new mongo({ id: 1, name: "awesome", balance: 30 });
 
 /*awesome_instance.save(function (err) {
   if (err) return console.log(err);
   // сохранили!
 });*/
 
+updates.hear(/^(?:condition)$/i, async (context) => {
+  const row = await mongo.findOne({ id: context.senderId });
+  if (!row.admin) return;
+  return context.send(`${row.name}, condition!
+VK-IO: ${VK ? "true" : "false"}  
+Mongo: ${mongo ? "true" : "false"}  
+Updates: ${updates ? "true" : "false"}`);
+});
+
 setInterval(async () => {
-  const row = await usersModel.find({});
+  const row = await mongo.find({});
 
   for (var i = 0; i < row.length; i++) {
     if (row[i].airline) {
-      const rowOne = await usersModel.findOne({ id: row[i].id });
+      const rowOne = await mongo.findOne({ id: row[i].id });
 
       rowOne.balanceAirline += list.airline[rowOne.airline - 1].cost;
       rowOne.save();
@@ -477,11 +487,11 @@ setInterval(async () => {
 }, 3600000);
 
 setInterval(async () => {
-  const row = await usersModel.find({});
+  const row = await mongo.find({});
 
   for (var i = 0; i < row.length; i++) {
     if (row[i].energy < 10) {
-      const rowOne = await usersModel.findOne({ id: row[i].id });
+      const rowOne = await mongo.findOne({ id: row[i].id });
 
       rowOne.energy += 1;
       rowOne.save();
