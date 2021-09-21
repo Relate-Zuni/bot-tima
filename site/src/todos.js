@@ -23,28 +23,7 @@ const errorSend = "";
 
 const mongoose = require("mongoose");
 
-(function () {
-  try {
-    mongoose.connect("mongodb+srv://timofei:jui2bQP2@cluster0.jjb63.mongodb.net/mongo?retryWrites=true&w=majority", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    return console.log("MongoDB connect...");
-  } catch (e) {
-    if(e) return console.log(e);
-  }
-})();
-
-let Schema = mongoose.Schema;
-
-let donated = new Schema({
-  pide: String,
-  bullid: String,
-  amount: Number,
-  senderId: Number
-});
-
-let donate = mongoose.model("donate", donated);
+let donate = mongoose.model("donate");
 let users = mongoose.model("users");
 
 router.get("/", (req, res) => {
@@ -150,4 +129,6 @@ setInterval(async () => {
 }
 }, 10000);
 
-return vk.updates.start();
+return vk.updates.start(() => {
+  console.log("[BOT] Состояние: trure")
+});

@@ -12,7 +12,7 @@ const hbs = exphbs.create({
 })
 
 app.listen(PORT, () => {
-console.log('Start server in PORT:3000');
+console.log("[SITE] Состояние: true");
 });
 
 app.engine('hbs', hbs.engine)

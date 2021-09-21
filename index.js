@@ -1,10 +1,14 @@
 const VK = require("./src/vkontakte");
 
 const config = require("./cnfg/mongo.json");
-const mongo = require("./src/mongo.js");
+const mongoDB = require("./src/mongo.js");
 const utils = require("./src/utils.js");
 const updates = require("./src/updates.js");
 const site = require("./site/index.js");
+
+const mongoose = require("mongoose");
+
+const mongo = mongoose.model("users");
 
 const vk = new VK({ token: config.tokenVk });
 
@@ -499,4 +503,6 @@ setInterval(async () => {
   }
 }, 300000);
 
-return vk.updates.start();
+return vk.updates.start(() => {
+  console.log("[BOT] Состояние: trure")
+});

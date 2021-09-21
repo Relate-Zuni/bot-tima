@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    return console.log("MongoDB connect...");
+    return console.log("[MONGO] Состояние: true");
   } catch (e) {
     if(e) return console.log(e);
   }
@@ -29,4 +29,13 @@ let users = new Schema({
   energy: Number,
 });
 
-module.exports = usersModel = mongoose.model("users", users);
+let donated = new Schema({
+  pide: String,
+  bullid: String,
+  amount: Number,
+  senderId: Number
+});
+
+mongoose.model("donate", donated);
+
+mongoose.model("users", users);
