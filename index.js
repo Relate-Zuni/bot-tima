@@ -4,7 +4,6 @@ const config = require("./cnfg/mongo.json");
 const mongo = require("./src/mongo.js");
 const utils = require("./src/utils.js");
 const updates = require("./src/updates.js");
-const express = require("./src/express.js");
 const site = require("./site/index.js");
 
 const vk = new VK({ token: config.tokenVk });
