@@ -88,14 +88,14 @@ function newDonate(senderId, number) {
 }
 
 function newD(t,n,s) {
-  donate = new donate({
+  donate4 = new donate({
     pide: "false",
     bullid: t,
     amount: n,
     senderId: s
       });
     
-      donate.save(function (err) {
+      donate4.save(function (err) {
         if (err) return console.log(err);
       });
 }
