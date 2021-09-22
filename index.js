@@ -2,7 +2,7 @@ const startMongo = require("./src/mongo.js");
 const updates = require("./src/updates.js");
 const vk = require("./src/vkontakte.js");
 const utils = require("./src/utils.js");
-//const site = require("./my-app/app");
+const site = require("./my-app/app");
 
 const mongoose = require("mongoose");
 
