@@ -30,6 +30,6 @@ let users = new Schema({
   energy: Number,
 });
 
-let mongoo = mongoose.model("users", users);
+let mongoo = mongoose.model("users");
 
 module.exports = mongoo;
