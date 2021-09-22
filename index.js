@@ -1,27 +1,57 @@
-const VK = require("./src/vkontakte");
-
-const config = require("./cnfg/mongo.json");
-const mongoDB = require("./src/mongo.js");
-const utils = require("./src/utils.js");
+const startMongo = require("./src/mongo.js");
 const updates = require("./src/updates.js");
-const site = require("./site/index.js");
+const vk = require("./src/vkontakte.js");
+const utils = require("./src/utils.js");
 
+const express = require("express");
+const app = express();
 const mongoose = require("mongoose");
+const PORT = process.env.PORT || 3000;
+
+
+app.listen(PORT, function () {
+  try {
+    console.log("Express started in port: 3000");
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 const mongo = mongoose.model("users");
 
-const vk = new VK({ token: config.tokenVk });
-
 vk.updates.on("message_new", updates.middleware);
 
+vk.updates.on("chat_invite_user", async (context, next) => {
+  const [request] = await vk.api.users.get({ user_id: context.senderId });
+
+  let emoji = utils.pick(["💡", "🎮", "📒"]);
+
+  if (context.eventMemberId)
+    return context.send(`🔔 Сау братишка за приглашение бота в беседу. 
+
+ℹ Чтобы бот отвечал ему нужно выдать доступ к переписке или же админку.`);
+
+  if (!context.eventMemberId)
+    return context.send(`${request.first_name}, приветствую! ${emoji}
+
+ℹ Отправьте "помощь", чтобы получить список команд.`);
+
+  context.send("Дамир, pong!");
+
+  next();
+});
+
 vk.updates.on("message_new", async (context, next) => {
+  if (context.isGroup) return;
+
   let row = await mongo.find({ id: `${context.senderId}` });
+  let leng = await mongo.find({});
 
   if (!row.length) {
     const [request] = await vk.api.users.get({ user_id: context.senderId });
 
     regisration = new mongo({
-      uid: row.length + 1,
+      uid: leng.length + 1,
       id: context.senderId,
       name: request.first_name,
       balance: 100,
@@ -37,7 +67,7 @@ vk.updates.on("message_new", async (context, next) => {
     regisration.save(function (err) {
       if (err) return console.log(err);
 
-      context.send(`🥰 ${request.first_name} вы зарегистрировались! 
+      context.send(`🥰 ${request.first_name}, вы зарегистрировались! 
 
 ℹ Отправьте "помощь", чтобы получить список команд.`);
     });
@@ -103,7 +133,7 @@ updates.hear(/^(?:профиль)$/i, async (context) => {
 
   text.profile = ``;
 
-  if (row.uid) text.profile += `🆔 Ваш ID > ${row.uid}\n`;
+  if (row.uid) text.profile += `🆔 Ваш ID > ${row.id}\n`;
   if (row.name) text.profile += `🧿 Ник > ${row.name}\n`;
   if (row.balance) text.profile += `💰 Денег > ${utils.sp(row.balance)}$\n`;
   if (row.experience) text.profile += `\n🏆 Опыт > ${row.experience} ед.\n`;
@@ -502,7 +532,3 @@ setInterval(async () => {
     }
   }
 }, 300000);
-
-return vk.updates.start(() => {
-  console.log("[BOT] Состояние: trure")
-});

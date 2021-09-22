@@ -1,4 +1,4 @@
-const mongo = require("../cnfg/mongo.json");
+const mongo = require("../cnfg/config.json");
 const mongoose = require("mongoose");
 
 (function () {
@@ -20,6 +20,7 @@ let users = new Schema({
   id: Number,
   name: String,
   balance: Number,
+  donateBalance: 0,
   experience: Number,
   admin: Number,
   work: Number,
@@ -28,14 +29,5 @@ let users = new Schema({
   balanceAirline: Number,
   energy: Number,
 });
-
-let donated = new Schema({
-  pide: String,
-  bullid: String,
-  amount: Number,
-  senderId: Number
-});
-
-mongoose.model("donate", donated);
 
 mongoose.model("users", users);
