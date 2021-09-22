@@ -2,6 +2,7 @@ const startMongo = require("./src/mongo.js");
 const updates = require("./src/updates.js");
 const vk = require("./src/vkontakte.js");
 const utils = require("./src/utils.js");
+const site = require("./my-app/app");
 
 const express = require("express");
 const app = express();
@@ -9,13 +10,13 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3000;
 
 
-app.listen(PORT, function () {
+/*app.listen(PORT, function () {
   try {
     console.log("Express started in port: 3000");
   } catch (e) {
     console.log(e);
   }
-});
+});*/
 
 const mongo = mongoose.model("users");
 
@@ -35,9 +36,6 @@ vk.updates.on("chat_invite_user", async (context, next) => {
     return context.send(`${request.first_name}, приветствую! ${emoji}
 
 ℹ Отправьте "помощь", чтобы получить список команд.`);
-
-  context.send("Дамир, pong!");
-
   next();
 });
 

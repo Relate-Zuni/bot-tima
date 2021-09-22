@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <meta charset="utf-8" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <form method="post">
+        <center>
+                <h1>ПОКУПКА ДОНАТА!</h1>
+                <br>
+                    <div class="col-lg-offset-6 col-lg-6">
+      <div class="panel" style="margin-bottom:15px">
+        <div class="container-fluid">
+          <div class="col-md-4">
+            <input
+              type="text"
+              name="id"
+              id="id"
+              class="form-control gray"
+              placeholder="Ваш игровой ID у бота"
+              required=""
+            />
+            <br />
+            <select
+              class="form-control gray"
+              id="selid"
+              name="selid"
+              required=""
+              title=""
+            >
+              <option disabled="" selected="">
+                Выберите товар для покупки
+              </option>
+              <optgroup label="Привилегии (навсегда)">
+                <option value="1">
+                  ULTRA статус — 1790 P.
+                </option>
+                <option value="2">
+                  АДМИНИСТРАТОР — 1500 P.
+                </option>
+                <option value="3">
+                  VIP статус — 299 P.
+                </option>
+              </optgroup>
+              <optgroup label="Игровая валюта">
+                <option value="4">
+                  1.000.000.000.000$ — 199 P.
+                </option>
+              </optgroup>
+              <optgroup label="Разбан аккаунта">
+                <option value="5">
+                  Снять вечный бан — 500 P. АКЦИЯ!
+                </option>
+              </optgroup>
+            </select>
+            <br />
+            <input
+              class="btn btn-primary"
+              type="submit"
+              value="Перейти к оплате"
+            />
+          </div>
+        </div>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+[
+	{
+		"don": {
+			"amount": 299,
+			"billId": 1,
+			"comment": "673654354",
+			"idGoods": 4003,
+			"pide": false
+		}
+	},
+	{
+		"don": {
+			"amount": 299,
+			"billId": 2,
+			"comment": "673654354",
+			"idGoods": 4003,
+			"pide": false
+		}
+	},
+	{
+		"don": {
+			"amount": 1790,
+			"billId": 3,
+			"comment": "673654354",
+			"idGoods": 3000,
+			"pide": true
+		},
+		"pide": true
+	}
+]
