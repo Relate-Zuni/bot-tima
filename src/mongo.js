@@ -2,15 +2,17 @@ const mongo = require("../cnfg/config.json");
 const mongoose = require("mongoose");
 
 (function () {
-  try {
-    mongoose.connect(mongo.tokenMongo, {
+  mongoose
+    .connect(mongo.tokenMongo, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+    })
+    .then((result) => {
+      return console.log("Mongo started!");
+    })
+    .catch((error) => {
+      if (error) return console.log(error);
     });
-    return console.log("[MONGO] Состояние: true");
-  } catch (e) {
-    if(e) return console.log(e);
-  }
 })();
 
 let Schema = mongoose.Schema;

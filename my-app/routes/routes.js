@@ -1,5 +1,5 @@
 const express = require("express");
-const fs = require('fs');
+const fs = require("fs");
 
 const router = express.Router();
 
@@ -43,45 +43,48 @@ router.post("/", function (request, response) {
 
   if (request.body.id || request.body.selid)
     response.redirect(qiwi.createPaymentForm(params));
-  donates.push({don});
+  donates.push({ don });
   return saveDonates();
 });
 
 function saveDonates() {
-  fs.writeFileSync("./database/donates.json", JSON.stringify(donates, null, "\t"));
+  fs.writeFileSync(
+    "./database/donates.json",
+    JSON.stringify(donates, null, "\t")
+  );
 }
 
 setInterval(async () => {
-  if(!donates.length) return;
+  if (!donates.length) return;
 
   for (var i = 0; i < donates.length; i++) {
-    console.log(donates[i].don.pide)
     if (donates[i].don.pide === false) {
       //const user = await newMongo.findOne({ id: Number(donates[i].comment)});
-  qiwi
-    .getBillInfo(donates[i].don.billId)
-    .then((data) => {
-      if (data.status.value === "WAITING") {
-return;
-      }
-      if (data.status.value === "PAID") {
-        console.log("Оплачено");
-        let donate = donates.find(e => e.don.billId === i);
-        donate.don.pide = true;
-        saveDonates()
-        vk.api.messages.send({
-          user_id: Number(donates[i - 1].don.comment),
-          random_id: 0,
-          message: `🔥 Поступил платёж в размере ${donates[i - 1].don.amount} RUB, чтобы проверить баланс отправьте > баланс`
+      qiwi
+        .getBillInfo(donates[i].don.billId)
+        .then((data) => {
+          if (data.status.value === "WAITING") {
+            return;
+          }
+          if (data.status.value === "PAID") {
+            console.log("Оплачено");
+            let donate = donates.find((e) => e.don.billId === i);
+            donate.don.pide = true;
+            saveDonates();
+            vk.api.messages.send({
+              user_id: Number(donates[i - 1].don.comment),
+              random_id: 0,
+              message: `🔥 Поступил платёж в размере ${
+                donates[i - 1].don.amount
+              } RUB, чтобы проверить баланс отправьте > баланс`,
+            });
+          }
         })
-       
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+        .catch((error) => {
+          if (error) return console.log(error);
+        });
+    }
   }
-}
 }, 3000);
 
 module.exports = router;

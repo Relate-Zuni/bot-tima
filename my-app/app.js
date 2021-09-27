@@ -13,7 +13,7 @@ app.use(routes);
 
 app.listen(PORT, function () {
   try {
-    console.log("Express started in port: 3000");
+    console.log("Express started!");
   } catch (e) {
     console.log(e);
   }
